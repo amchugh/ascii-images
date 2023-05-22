@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+.destination {
+    font-style: 'Courier New', monospace, default;
+    font-size: smaller;
+    resize: none;
+    white-space: pre-wrap;
+    word-break: break-all;
+    float:right;
+    /* overflow-wrap: normal; */
+    /* overflow-x: scroll; */
+}
+.slider {
+    min-width: 300px;
+}
+#controls {
+    display: inline-block;
+    vertical-align: top;
+}
+    </style>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+</head>
+<body>
+    <h1>Ascii images!</h1>
+    <div id="videoContainer"></div>
+
+    <div id="controls"><h1>Settings:</h1>
+    <button id="go">Start Video</button>
+    <button id="freeze">Freeze Video</button>
+    <button id="clickme">Convert</button>
+    </div>
+    <canvas id="display"></canvas>
+    <textarea class="destination" readonly>Image will appear here</textarea>
+    <canvas id="destination"></canvas>
+
+    <script src="index.js"></script>
+</body>
+</html>
