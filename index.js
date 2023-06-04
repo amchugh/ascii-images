@@ -90,6 +90,12 @@ function downscale(data, width) {
     return output;
 }
 
+function setAsciiOutput(text) {
+    console.log("Updating")
+    // textdst.value = text
+    // Draw
+}
+
 function convert() {
     // Get the raw frame data
     const frame = ctx.getImageData(0, 0, cv.width, cv.height);
@@ -265,7 +271,8 @@ function convert() {
         }
     }
 
-    textdst.value = imageToAscii(arr, textdst.cols);
+    output = imageToAscii(arr, textdst.cols);
+    setAsciiOutput(output)
 
     // Update the data so we can see the partial
     let o = supressed
@@ -374,7 +381,7 @@ $(function () {
         dstctx = dstcv.getContext('2d');
     }
 
-    dstcv.hidden = true;
+    // dstcv.hidden = true;
 
     let d = $('.destination')[0]
     // d.cols = 47

@@ -1,0 +1,92 @@
+@import url("https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&family=Lato:ital,wght@0,300;0,400;1,300;1,400&family=Noto+Serif:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@font-face {
+  font-family: Noto;
+  src: url(assets/NotoSerif-VariableFont_wdth,wght.ttf);
+}
+@font-face {
+  font-family: Slabo;
+  src: url(assets/Slabo27px-Regular.ttf);
+}
+html, body {
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  font-family: "EB Garamond", serif;
+  font-size: 20px;
+}
+
+.header {
+  display: block;
+  height: 3rem;
+  width: 100%;
+  margin: 0;
+  text-align: center;
+  padding-top: 8px;
+}
+.header h1 {
+  font-family: Noto;
+  margin: 0 auto;
+  font-size: 2rem;
+  color: #0b4c63;
+  font-weight: 900;
+  width: 200px;
+  background: white;
+}
+
+.header:before {
+  content: "";
+  position: absolute;
+  border-top: 2px solid #0b4c63;
+  width: calc(100% - 40px);
+  left: 20px;
+  transform: translateY(30px);
+  z-index: -1;
+}
+
+.navigation {
+  width: 100%;
+  height: 2.3rem;
+  color: #1F87AD;
+  border-bottom: 2px solid #0b4c63;
+  display: block;
+  box-sizing: content-box;
+}
+.navigation .tab-container {
+  padding-top: 0.4rem;
+  min-width: 550px;
+  max-width: 700px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+.navigation .tab-container .tab {
+  font-family: Noto;
+  min-width: fit-content;
+  text-align: center;
+  width: 100%;
+  justify-content: space-evenly;
+}
+.navigation .tab-container .tab-active {
+  font-weight: 900;
+}
+.navigation .tab-container .tab:hover {
+  cursor: pointer;
+}
+
+.section.section-disabled {
+  display: none;
+}
+
+#hello {
+  width: 900px;
+  margin: 1rem auto 0;
+  box-sizing: border-box;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  border-radius: 1rem;
+  padding: 1rem 2rem;
+}
+#hello h1 {
+  margin: 0;
+  color: #59CDF7;
+  font-family: Noto;
+}
