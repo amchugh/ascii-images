@@ -84,8 +84,59 @@ function downscale(data, width, height, desired_width, desired_height) {
     }
     return output;
 }
+var currentPage;
+function highlightCurrentTab() {
+    var activeClassName = "tab-active";
+    // Remove the class from everyone from everyone.
+    $(".tab").removeClass(activeClassName);
+    // Use the current page to decide who 
+    // to give it back to.
+    var searching = ".tab-" + currentPage;
+    $(searching).addClass(activeClassName);
+}
+function showPageContent() {
+    var activeClassName = "section-active";
+    // Remove the class from everyone from everyone.
+    $(".section").removeClass(activeClassName);
+    // Use the current page to decide who 
+    // to give it back to.
+    var searching = ".section-" + currentPage;
+    $(searching).addClass(activeClassName);
+}
+function switchToSelectedPage() {
+    highlightCurrentTab();
+    showPageContent();
+}
+function switchToPage(page) {
+    currentPage = page;
+    switchToSelectedPage();
+}
+function initNavigation() {
+    console.debug("Navigation setup");
+    currentPage = "select";
+    switchToSelectedPage();
+    // Get when a tab is clicked
+    $(".tab").on("click", function (e) {
+        var classes = e.target.classList;
+        if (classes.contains("tab-about"))
+            currentPage = "about";
+        if (classes.contains("tab-select"))
+            currentPage = "select";
+        if (classes.contains("tab-view"))
+            currentPage = "view";
+        // if (classes.contains("tab-advanced")) currentPage = "advanced";
+        if (classes.contains("tab-advanced")) {
+            alert("Haven't done that part yet :)");
+            // currentPage = "advanced";
+            currentPage = "about";
+        }
+        switchToSelectedPage();
+    });
+    $(".switch-to-select").on("click", function () { return switchToPage("select"); });
+}
 /// <reference path="helloworld.ts" />
 /// <reference path="imagemanip.ts" />
+/// <reference path="navigation.ts" />
 var config = {
     srcVideoWidth: '400px',
     srcVideoHeight: '400px',
@@ -106,7 +157,7 @@ var config = {
     asciiCharacters: [' ', '.', ',', '!', '*', 'o', 'O', '8', '#', '@'],
     fontSize: 16,
     fontName: "Courier New",
-    desiredOutputLines: 60,
+    desiredOutputLines: 120,
     ratios: {
         video: 4 / 3,
     },
@@ -281,6 +332,8 @@ function imageToAscii(data, width, height) {
     return output;
 }
 function drawAndConvert(toDisplay) {
+    // Remove existing outputs, if they exist
+    $(".output-container").children().remove();
     var cv = document.createElement('canvas');
     cv.height = 300;
     cv.width = cv.height * config.ratios.video;
@@ -292,11 +345,13 @@ function drawAndConvert(toDisplay) {
     var frame = ctx.getImageData(0, 0, cv.width, cv.height);
     var data = frame.data;
     var out = imageToAscii(data, frame.width, frame.height);
+    // Let's set the last output for retrieval later
+    localStorage.setItem("last output", out);
     var cv2 = document.createElement('canvas');
     var _a = getOutputImageSize(), cvw = _a[0], cvh = _a[1];
     cv2.height = cvh;
     cv2.width = cvw;
-    $('body').append(cv2);
+    $('.output-container').append(cv2);
     var c = cv2.getContext('2d');
     // const fontSize = config.fontSize
     // c.font = fontSize + "px Courier New";
@@ -308,6 +363,8 @@ function drawAndConvert(toDisplay) {
     }
     // c.fillText(out, 0, fontSize * config.outputHeight)
     // c.fillText("Hello!", 48, 48)
+    $(".before").hide();
+    $(".after-controls").show();
 }
 $(function () {
     var video = document.createElement('video');
@@ -315,7 +372,8 @@ $(function () {
     video.setAttribute('autoplay', '');
     video.setAttribute('muted', '');
     video.style.width = config.srcVideoWidth;
-    video.style.height = config.srcVideoHeight;
+    // video.style.height = config.srcVideoHeight;
+    video.style.height = "auto";
     // We want the front-facing camera
     var facingMode = "user"; // Can be 'user' or 'environment' to access back or front camera (NEAT!)
     var constraints = {
@@ -324,23 +382,42 @@ $(function () {
             facingMode: facingMode
         }
     };
-    navigator.mediaDevices.getUserMedia(constraints).then(function success(stream) {
-        video.srcObject = stream;
-    });
-    $('body').append(video);
-    setTimeout(function () { return drawAndConvert(video); }, 1500);
+    // setTimeout(() => drawAndConvert(video), 1500)
     // Image submission!
-    var inp = $('<input type="file" accept="image/jpeg, image/png, image/jpg">')[0];
-    $('body').append(inp);
-    inp.addEventListener("change", function () {
-        var files = inp.files;
+    $(".upload").on("change", function (e) {
+        var el = e.target;
+        var files = el.files;
         var file = files[0];
-        console.log("Displaying " + file.name);
+        console.debug("Displaying " + file.name);
         // Create an image object
         var img = document.createElement("img");
         img.src = URL.createObjectURL(file);
         img.style.display = "none";
         $('body').append(img);
-        setTimeout(function () { return drawAndConvert(img); }, 10);
+        setTimeout(function () {
+            drawAndConvert(img);
+            switchToPage("view");
+        }, 10);
     });
+    // Hide the camera controls until the video is enabled
+    $(".video-view").children().hide();
+    // Request for video!
+    $(".enable-video").on("click", function () {
+        navigator.mediaDevices.getUserMedia(constraints).then(function success(stream) {
+            video.srcObject = stream;
+            // Show the video controls
+            $(".video-view").children().show();
+            // Add the video to the display, remove the button
+            $(".video-view").prepend(video);
+            $(".enable-video").parent().hide();
+        });
+    });
+    // Take the photo
+    $(".capture").on("click", function () {
+        switchToPage("view");
+        drawAndConvert(video);
+    });
+    // Hide the after controls by default
+    $(".after-controls").hide();
+    initNavigation();
 });

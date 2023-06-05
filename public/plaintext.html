@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plaintext</title>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+    <script>
+$(function() {
+    // See if we can find some last output
+    let output = localStorage.getItem("last output")
+    if (output == null || output == "") {
+        return;
+    }
+    // Display
+    $(".failure").hide();
+    $(".output").html(
+        output
+            .replaceAll("\r\n", "<br>")
+            .replaceAll(" ", "&nbsp;")
+        );
+})
+    </script>
+    <style>
+.output {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 16px;
+    width: 100000px
+}
+    </style>
+</head>
+<body>
+    <div class="failure">
+        <h1>Failed to find last output. Please <a href="/index.html">return</a>.</h1>
+    </div>
+    <div class="output"></div>
+</body>
+</html>

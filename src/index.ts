@@ -23,7 +23,7 @@ const config = {
     asciiCharacters: [' ', '.', ',', '!', '*', 'o', 'O', '8', '#', '@'],
     fontSize: 16,
     fontName: "Courier New",
-    desiredOutputLines: 60,
+    desiredOutputLines: 120,
     ratios: {
         video: 4 / 3,
     },
@@ -211,11 +211,14 @@ function imageToAscii(
 
     console.debug("Converting to ascii characters")
     const output = valuesToAscii(final, wout)
-    
+
     return output;
 }
 
 function drawAndConvert(toDisplay : CanvasImageSource) : void {
+    // Remove existing outputs, if they exist
+    $(".output-container").children().remove()
+
     let cv = document.createElement('canvas');
     cv.height = 300;
     cv.width = cv.height * config.ratios.video;
@@ -231,11 +234,14 @@ function drawAndConvert(toDisplay : CanvasImageSource) : void {
 
     let out = imageToAscii(data, frame.width, frame.height);
 
+    // Let's set the last output for retrieval later
+    localStorage.setItem("last output", out);
+
     let cv2 = document.createElement('canvas');
     let [cvw, cvh] = getOutputImageSize()
     cv2.height = cvh;
     cv2.width = cvw;
-    $('body').append(cv2);
+    $('.output-container').append(cv2);
     let c = cv2.getContext('2d');
     // const fontSize = config.fontSize
     // c.font = fontSize + "px Courier New";
@@ -247,15 +253,19 @@ function drawAndConvert(toDisplay : CanvasImageSource) : void {
     }
     // c.fillText(out, 0, fontSize * config.outputHeight)
     // c.fillText("Hello!", 48, 48)
+
+    $(".before").hide();
+    $(".after-controls").show();
 }
 
 $(function() {
-    let video : HTMLVideoElement = document.createElement('video');
+    var video : HTMLVideoElement = document.createElement('video');
     video.setAttribute('playsinline', '');
     video.setAttribute('autoplay', '');
     video.setAttribute('muted', '');
     video.style.width = config.srcVideoWidth;
-    video.style.height = config.srcVideoHeight;
+    // video.style.height = config.srcVideoHeight;
+    video.style.height = "auto"
 
     // We want the front-facing camera
     var facingMode = "user"; // Can be 'user' or 'environment' to access back or front camera (NEAT!)
@@ -266,21 +276,15 @@ $(function() {
             facingMode: facingMode
         }
     };
-    navigator.mediaDevices.getUserMedia(constraints).then(function success(stream) {
-        video.srcObject = stream;
-    });
 
-    $('body').append(video)
-
-    setTimeout(() => drawAndConvert(video), 1500)
+    // setTimeout(() => drawAndConvert(video), 1500)
 
     // Image submission!
-    let inp = $('<input type="file" accept="image/jpeg, image/png, image/jpg">')[0] as HTMLInputElement;
-    $('body').append(inp)
-    inp.addEventListener("change", function () {
-        const files = inp.files;
+    $(".upload").on("change", function(e) {
+        const el = e.target as HTMLInputElement;
+        const files = el.files;
         const file = files[0]
-        console.log("Displaying " + file.name)
+        console.debug("Displaying " + file.name)
 
         // Create an image object
         const img = document.createElement("img")
@@ -288,6 +292,35 @@ $(function() {
         img.style.display = "none"
         $('body').append(img)
 
-        setTimeout(() => drawAndConvert(img), 10);
+        setTimeout(() => {
+            drawAndConvert(img);
+            switchToPage("view");
+        }, 10);
     })
+
+    // Hide the camera controls until the video is enabled
+    $(".video-view").children().hide();
+
+    // Request for video!
+    $(".enable-video").on("click", function() {
+        navigator.mediaDevices.getUserMedia(constraints).then(function success(stream) {
+            video.srcObject = stream;
+            // Show the video controls
+            $(".video-view").children().show();
+            // Add the video to the display, remove the button
+            $(".video-view").prepend(video);
+            $(".enable-video").parent().hide();
+        });
+    })
+
+    // Take the photo
+    $(".capture").on("click", function() {
+        switchToPage("view")
+        drawAndConvert(video)
+    })
+    
+    // Hide the after controls by default
+    $(".after-controls").hide();
+
+    initNavigation()
 })
