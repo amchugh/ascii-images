@@ -243,9 +243,10 @@ function drawAndConvert(toDisplay : CanvasImageSource) : void {
     cv2.width = cvw;
     $('.output-container').append(cv2);
     let c = cv2.getContext('2d');
-    // const fontSize = config.fontSize
-    // c.font = fontSize + "px Courier New";
-    c.font = config.fontString()
+    c.fillStyle = "white";
+    c.fillRect(0, 0, cv2.width, cv2.height);
+    c.fillStyle = "black";
+    c.font = config.fontString();
     c.textBaseline = "bottom"
     const rows = out.split("\r\n")
     for (let i = 0; i < rows.length; i++) {

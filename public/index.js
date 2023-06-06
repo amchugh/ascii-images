@@ -113,8 +113,7 @@ function switchToPage(page) {
 }
 function initNavigation() {
     console.debug("Navigation setup");
-    currentPage = "select";
-    switchToSelectedPage();
+    switchToPage("about");
     // Get when a tab is clicked
     $(".tab").on("click", function (e) {
         var classes = e.target.classList;
@@ -353,8 +352,9 @@ function drawAndConvert(toDisplay) {
     cv2.width = cvw;
     $('.output-container').append(cv2);
     var c = cv2.getContext('2d');
-    // const fontSize = config.fontSize
-    // c.font = fontSize + "px Courier New";
+    c.fillStyle = "white";
+    c.fillRect(0, 0, cv2.width, cv2.height);
+    c.fillStyle = "black";
     c.font = config.fontString();
     c.textBaseline = "bottom";
     var rows = out.split("\r\n");

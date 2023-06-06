@@ -36,8 +36,7 @@ function switchToPage(page : Pages) : void {
 function initNavigation() : void {
     console.debug("Navigation setup")
 
-    currentPage = "select";
-    switchToSelectedPage();
+    switchToPage("about")
 
     // Get when a tab is clicked
     $(".tab").on("click", e=>{
