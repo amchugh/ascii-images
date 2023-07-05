@@ -1,7 +1,8 @@
 
-/// <reference path="helloworld.ts" />
 /// <reference path="imagemanip.ts" />
 /// <reference path="navigation.ts" />
+
+var lastDisplay;
 
 const config = {
     srcVideoWidth: '400px',
@@ -215,9 +216,11 @@ function imageToAscii(
     return output;
 }
 
-function drawAndConvert(toDisplay : CanvasImageSource) : void {
+function drawAndConvert(toDisplay : CanvasImageSource, dest : string) : void {
     // Remove existing outputs, if they exist
-    $(".output-container").children().remove()
+    const destel = $(dest)
+    destel.children().remove()
+    console.debug('Drawing to', destel)
 
     let cv = document.createElement('canvas');
     cv.height = 300;
@@ -228,6 +231,8 @@ function drawAndConvert(toDisplay : CanvasImageSource) : void {
     ctx.translate(cv.width, 0);
     ctx.scale(-1, 1);
     ctx.drawImage(toDisplay, 0, 0, cv.width, cv.height);
+
+    lastDisplay = toDisplay;
 
     let frame = ctx.getImageData(0, 0, cv.width, cv.height);
     let data = frame.data;
@@ -241,7 +246,7 @@ function drawAndConvert(toDisplay : CanvasImageSource) : void {
     let [cvw, cvh] = getOutputImageSize()
     cv2.height = cvh;
     cv2.width = cvw;
-    $('.output-container').append(cv2);
+    destel.append(cv2);
     let c = cv2.getContext('2d');
     c.fillStyle = "white";
     c.fillRect(0, 0, cv2.width, cv2.height);
@@ -258,6 +263,27 @@ function drawAndConvert(toDisplay : CanvasImageSource) : void {
     $(".before").hide();
     $(".after-controls").show();
 }
+
+function showAlert(message : string) {
+    alert(message)
+}
+
+function rerenderAdvanced() {
+    if (lastDisplay == null) { 
+        showAlert("You need to take or upload a picture first")
+        return; 
+    }
+    drawAndConvert(lastDisplay, '.advanced-output-container')
+}
+
+// function addSlider(low : number, high : number, defaultValue : number, label : string, target : any) {
+//     const labelEl = document.createElement("div")
+//     labelEl.innerText = label
+    
+//     $('.left').prepend(labelEl)
+
+//     target = low
+// }
 
 $(function() {
     var video : HTMLVideoElement = document.createElement('video');
@@ -294,7 +320,7 @@ $(function() {
         $('body').append(img)
 
         setTimeout(() => {
-            drawAndConvert(img);
+            drawAndConvert(img, '.output-container');
             switchToPage("view");
         }, 10);
     })
@@ -302,8 +328,7 @@ $(function() {
     // Hide the camera controls until the video is enabled
     $(".video-view").children().hide();
 
-    // Request for video!
-    $(".enable-video").on("click", function() {
+    function enableVideo() {
         navigator.mediaDevices.getUserMedia(constraints).then(function success(stream) {
             video.srcObject = stream;
             // Show the video controls
@@ -312,16 +337,36 @@ $(function() {
             $(".video-view").prepend(video);
             $(".enable-video").parent().hide();
         });
-    })
+    }
+
+    // Request for video!
+    $(".enable-video").on("click", enableVideo)
 
     // Take the photo
     $(".capture").on("click", function() {
         switchToPage("view")
-        drawAndConvert(video)
+        drawAndConvert(video, '.output-container')
     })
+
+    // addSlider(1, 120, 120, 'Text output lines', config.desiredOutputLines)
+
+
     
     // Hide the after controls by default
     $(".after-controls").hide();
+    // $(".before").hide();
 
     initNavigation()
+
+    // $(".advanced-output-container").append(document.createElement("canvas"))
+    // enableVideo()
+
+    // setTimeout(function() {
+    //     drawAndConvert(video, '.advanced-output-container')
+    //     switchToPage('advanced')
+    // }, 2000)
+
+    // $(".advanced-render-btn").on("click", rerenderAdvanced)
+
+
 })

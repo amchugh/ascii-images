@@ -44,13 +44,7 @@ function initNavigation() : void {
         if (classes.contains("tab-about")) currentPage = "about";
         if (classes.contains("tab-select")) currentPage = "select";
         if (classes.contains("tab-view")) currentPage = "view";
-        // if (classes.contains("tab-advanced")) currentPage = "advanced";
-        if (classes.contains("tab-advanced")) {
-            alert("Haven't done that part yet :)")
-            // currentPage = "advanced";
-            currentPage = "about"
-        }
-        switchToSelectedPage();
+        if (classes.contains("tab-advanced")) currentPage = "advanced";       switchToSelectedPage();
     })
 
     $(".switch-to-select").on("click", () => switchToPage("select"))

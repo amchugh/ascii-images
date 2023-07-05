@@ -57,7 +57,7 @@ html, body {
   max-width: 700px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
 }
 .navigation .tab-container .tab {
   font-family: Noto;
@@ -160,10 +160,11 @@ html, body {
 .section.section-view {
   width: fit-content;
 }
-.section.section-view .output-container {
+
+.output-container, .advanced-output-container {
   width: 100%;
 }
-.section.section-view .output-container canvas {
+.output-container canvas, .advanced-output-container canvas {
   display: block;
   margin: 0 auto;
   max-width: 100%;
@@ -172,10 +173,44 @@ html, body {
   height: auto;
   border: 1px solid #0b4c63;
 }
-.section.section-view .before h2 {
+
+.before h2 {
   color: #F7AB59;
   text-align: center;
   font-weight: 900;
   font-family: Noto;
   margin: 1rem 0 0;
+}
+
+.section.section-advanced .advanced-render-btn {
+  margin: 0.5rem;
+  width: 20px;
+  height: 20px;
+  background-color: #F7AB59;
+  padding: 8px;
+  border-radius: 20px;
+  color: white;
+  transition: filter 100ms;
+  display: inline-block;
+}
+.section.section-advanced .advanced-render-btn:hover {
+  cursor: pointer;
+  filter: brightness(90%);
+  transition: filter 200ms;
+}
+.section.section-advanced .adv-controls {
+  display: block;
+  width: 400px;
+  margin: 0 auto;
+}
+.section.section-advanced .adv-disp-container {
+  display: grid;
+  grid-template-columns: 2fr 5fr;
+}
+.section.section-advanced .left {
+  width: 100%;
+  text-align: center;
+}
+.section.section-advanced .right {
+  width: 100%;
 }

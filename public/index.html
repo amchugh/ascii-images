@@ -18,19 +18,46 @@
             <span class="tab-about tab">About</span>
             <span class="tab-select tab">Photo/Upload</span>
             <span class="tab-view tab">View</span>
-            <span class="tab-advanced tab">Advanced</span>
+            <!-- <span class="tab-advanced tab">Advanced</span> -->
         </div>
     </div>
     <div class="section-container">
         <div class="section-about card section">
             <h1>Welcome to Asciify</h1>
-            <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.</p>
-            <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.</p>
-            <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, commodo vitae, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui. Donec non enim in turpis pulvinar facilisis. Ut felis. Praesent dapibus, neque id cursus faucibus, tortor neque egestas augue, eu vulputate magna eros eu erat. Aliquam erat volutpat. Nam dui mi, tincidunt quis, accumsan porttitor, facilisis luctus, metus</p>
-            <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.</p>
+            <p>Welcome to Asciify, the app that transforms your images into an ASCII-text based format! Asciify offers a unique and creative way to reimagine your pictures. With just a few clicks, you can take an ascii photo, or convert a photo from your library.</p>
             <div class="btn-box">
                 <span class="btn switch-to-select">Take or Upload a photo to get started</span>
             </div>
+            <p>Using Asciify is easy; simply click the 'Photo/Upload' tab to either upload a photo from your local device, or enable webcam access and take your own photo. Currently, only PNG formatted images are tested, although most common image formats should work fine. Once your image has been converted, you can save the image output or view the raw text output in the 'View' tab. Feel free to share these generated images and text blocks!</p>
+            <p>The conversion to ASCII representation happens on the local device -- your images are never uploaded to any external server, and we collect no user information. No cookies are used. As a result of the local computation, real time processing is not feasible. Images will take between a few hundred milliseconds and a couple seconds to compute, depending on the device. Many algorithms go into the Asciify process; keep reading to learn how the process works.</p>
+            <p>Asciify was made by a single engineer, Aidan McHugh. You can view the source code for this site --along with some of his other work-- on <a href="https://github.com/amchugh">github</a>.</p>
+            <p>There's definitely a lot more that could be added to the app. Here's a short list of prioritized future updates. No reassurances that these will ever be done.
+            <ul>
+                <li>Ability to change various settings: <ul>
+                    <li>Background/foreground color</li>
+                    <li>Number of lines in the output</li>
+                    <li>Font selection / Custom fonts</li>
+                    <li>Custom character sets</li>
+                </ul></li>
+                <li>Optimization of underlying algorithm</li>
+                <li>Realtime transformation</li>
+                <li>Video support</li>
+                <li>Opt-in server-side rendering for smartphones and other low-spec devices</li>
+                <li>A better explanation of the underlying algorithms</li>
+            </ul>
+            If there's a feature you particularly want, please open an issue on the <a href="https://github.com/amchugh/ascii-images">github page for this project</a> so I know what to prioritize.
+            </p>
+            <p>Put simply, here is how the algorithm works:
+            <ol>
+                <li>The image is converted to black and white.</li>
+                <li>For every character in the output, we group up sections of the image. For example, by default we create an image that has 120 rows and 146 columns. This means the image is broken up into 17,520 buckets. Each bucket will be transformed into a single ascii character.</li>
+                <li>We take the average brightness for each bucket as its value.</li>
+                <li>We then run a modified Canny edge detector routine. This identifies different elements of the image. We use this as a modified on the existing bucket value, causing individual elements of the image to pop.</li>
+                <li>We then normalize all the bucket values to a number between 0 and 1. This is then used to directly assign each bucket an ascii character. If a bucket has a value of 0, it gets a space. If the bucket has a value of 1, it gets an @.</li>
+                <li>The bucket text values are reassembled into the final image.</li>
+            </ol>
+            </p>
+            <p>Thanks for reading, and please enjoy my tool!</p>
         </div>
         <div class="section-select card section">
             <h1>Select your image</h1>
@@ -50,7 +77,7 @@
             </div>
         </div>
         <div class="section-view card bigcard section">
-            <h1 class="after-controls"">View</h1>
+            <h1>View</h1>
             <div class="before">
                 <h2>Take a picture first!</h2>
                 <div class="btn-box"><span class="btn switch-to-select">Take or Upload a photo to get started</span></div>
@@ -64,6 +91,25 @@
         </div>
         <div class="section-advanced card bigcard section">
             <h1>Advanced Options</h1>
+            <div class="before">
+                <h2>Take a picture first!</h2>
+                <div class="btn-box"><span class="btn switch-to-select">Take or Upload a photo to get started</span></div>
+            </div>
+            <div class="after-controls adv-disp-container">
+                <div class="left">
+                    <div>Desired output lines <input class=".desiredOutputLines" type="range" low="16" high="200" value="120">
+                    </div>
+                    <div>This is another piece of text</div>
+                    <div class="advanced-render-btn" title="Re-render content">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+                            <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="right advanced-output-container"></div>
+            </div>
+            <div class="after-controls adv-controls"></div>
         </div>
     </div>
 </body>

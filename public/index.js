@@ -123,19 +123,15 @@ function initNavigation() {
             currentPage = "select";
         if (classes.contains("tab-view"))
             currentPage = "view";
-        // if (classes.contains("tab-advanced")) currentPage = "advanced";
-        if (classes.contains("tab-advanced")) {
-            alert("Haven't done that part yet :)");
-            // currentPage = "advanced";
-            currentPage = "about";
-        }
+        if (classes.contains("tab-advanced"))
+            currentPage = "advanced";
         switchToSelectedPage();
     });
     $(".switch-to-select").on("click", function () { return switchToPage("select"); });
 }
-/// <reference path="helloworld.ts" />
 /// <reference path="imagemanip.ts" />
 /// <reference path="navigation.ts" />
+var lastDisplay;
 var config = {
     srcVideoWidth: '400px',
     srcVideoHeight: '400px',
@@ -330,9 +326,11 @@ function imageToAscii(data, width, height) {
     var output = valuesToAscii(final, wout);
     return output;
 }
-function drawAndConvert(toDisplay) {
+function drawAndConvert(toDisplay, dest) {
     // Remove existing outputs, if they exist
-    $(".output-container").children().remove();
+    var destel = $(dest);
+    destel.children().remove();
+    console.debug('Drawing to', destel);
     var cv = document.createElement('canvas');
     cv.height = 300;
     cv.width = cv.height * config.ratios.video;
@@ -341,6 +339,7 @@ function drawAndConvert(toDisplay) {
     ctx.translate(cv.width, 0);
     ctx.scale(-1, 1);
     ctx.drawImage(toDisplay, 0, 0, cv.width, cv.height);
+    lastDisplay = toDisplay;
     var frame = ctx.getImageData(0, 0, cv.width, cv.height);
     var data = frame.data;
     var out = imageToAscii(data, frame.width, frame.height);
@@ -350,7 +349,7 @@ function drawAndConvert(toDisplay) {
     var _a = getOutputImageSize(), cvw = _a[0], cvh = _a[1];
     cv2.height = cvh;
     cv2.width = cvw;
-    $('.output-container').append(cv2);
+    destel.append(cv2);
     var c = cv2.getContext('2d');
     c.fillStyle = "white";
     c.fillRect(0, 0, cv2.width, cv2.height);
@@ -366,6 +365,22 @@ function drawAndConvert(toDisplay) {
     $(".before").hide();
     $(".after-controls").show();
 }
+function showAlert(message) {
+    alert(message);
+}
+function rerenderAdvanced() {
+    if (lastDisplay == null) {
+        showAlert("You need to take or upload a picture first");
+        return;
+    }
+    drawAndConvert(lastDisplay, '.advanced-output-container');
+}
+// function addSlider(low : number, high : number, defaultValue : number, label : string, target : any) {
+//     const labelEl = document.createElement("div")
+//     labelEl.innerText = label
+//     $('.left').prepend(labelEl)
+//     target = low
+// }
 $(function () {
     var video = document.createElement('video');
     video.setAttribute('playsinline', '');
@@ -395,14 +410,13 @@ $(function () {
         img.style.display = "none";
         $('body').append(img);
         setTimeout(function () {
-            drawAndConvert(img);
+            drawAndConvert(img, '.output-container');
             switchToPage("view");
         }, 10);
     });
     // Hide the camera controls until the video is enabled
     $(".video-view").children().hide();
-    // Request for video!
-    $(".enable-video").on("click", function () {
+    function enableVideo() {
         navigator.mediaDevices.getUserMedia(constraints).then(function success(stream) {
             video.srcObject = stream;
             // Show the video controls
@@ -411,13 +425,24 @@ $(function () {
             $(".video-view").prepend(video);
             $(".enable-video").parent().hide();
         });
-    });
+    }
+    // Request for video!
+    $(".enable-video").on("click", enableVideo);
     // Take the photo
     $(".capture").on("click", function () {
         switchToPage("view");
-        drawAndConvert(video);
+        drawAndConvert(video, '.output-container');
     });
+    // addSlider(1, 120, 120, 'Text output lines', config.desiredOutputLines)
     // Hide the after controls by default
     $(".after-controls").hide();
+    // $(".before").hide();
     initNavigation();
+    // $(".advanced-output-container").append(document.createElement("canvas"))
+    // enableVideo()
+    // setTimeout(function() {
+    //     drawAndConvert(video, '.advanced-output-container')
+    //     switchToPage('advanced')
+    // }, 2000)
+    // $(".advanced-render-btn").on("click", rerenderAdvanced)
 });
